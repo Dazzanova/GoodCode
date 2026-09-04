@@ -1,0 +1,186 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum SubmissionStatus {
+  PENDING
+  ACCEPTED
+  WRONG_ANSWER
+  RUNTIME_ERROR
+  TLE
+}
+
+enum ProgressStatus {
+  NOT_ATTEMPTED
+  ATTEMPTED
+  SOLVED
+  NEEDS_REVIEW
+  MASTERED
+}
+
+model User {
+  id            String   @id @default(cuid())
+  name          String?
+  email         String   @unique
+  passwordHash  String?
+  role          Role     @default(USER)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  submissions   Submission[]
+  progress      ProblemProgress[]
+  notes         Note[]
+}
+
+model Topic {
+  id       String    @id @default(cuid())
+  name     String
+  slug     String    @unique
+  problems Problem[]
+}
+
+model Pattern {
+  id          String            @id @default(cuid())
+  name        String
+  slug        String            @unique
+  description String?
+  problems    ProblemPattern[]
+}
+
+model Problem {
+  id           String            @id @default(cuid())
+  title        String
+  slug         String            @unique
+  description  String
+  constraints  String?
+  examples     Json?
+  starterCode  Json?
+  difficulty   Difficulty
+  published    Boolean           @default(false)
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  topicId      String
+  topic        Topic             @relation(fields: [topicId], references: [id])
+
+  patterns     ProblemPattern[]
+  hints        Hint[]
+  solution     Solution?
+  mcqs         MCQ[]
+  submissions  Submission[]
+  progress     ProblemProgress[]
+  notes        Note[]
+}
+
+model ProblemPattern {
+  problemId String
+  patternId String
+  problem   Problem @relation(fields: [problemId], references: [id])
+  pattern   Pattern @relation(fields: [patternId], references: [id])
+
+  @@id([problemId, patternId])
+}
+
+model Submission {
+  id          String            @id @default(cuid())
+  userId      String
+  problemId   String
+  code        String
+  language    String
+  status      SubmissionStatus
+  runtimeMs   Int?
+  memoryKb    Int?
+  timeSpentS  Int?
+  submittedAt DateTime          @default(now())
+
+  user        User    @relation(fields: [userId], references: [id])
+  problem     Problem @relation(fields: [problemId], references: [id])
+}
+
+model ProblemProgress {
+  id             String         @id @default(cuid())
+  userId         String
+  problemId      String
+  status         ProgressStatus @default(NOT_ATTEMPTED)
+  attempts       Int            @default(0)
+  hintsUsed      Int            @default(0)
+  confidence     Int?
+  firstAttemptAt DateTime?
+  lastAttemptAt  DateTime?
+  solvedAt       DateTime?
+
+  user           User    @relation(fields: [userId], references: [id])
+  problem        Problem @relation(fields: [problemId], references: [id])
+
+  @@unique([userId, problemId])
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  userId    String
+  problemId String
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User    @relation(fields: [userId], references: [id])
+  problem   Problem @relation(fields: [problemId], references: [id])
+}
+
+model Hint {
+  id        String  @id @default(cuid())
+  problemId String
+  order     Int
+  content   String
+
+  problem   Problem @relation(fields: [problemId], references: [id])
+}
+
+model Solution {
+  id           String  @id @default(cuid())
+  problemId    String  @unique
+  editorial    String?
+  codeSnippet  String?
+
+  problem      Problem @relation(fields: [problemId], references: [id])
+}
+
+model MCQ {
+  id        String       @id @default(cuid())
+  problemId String
+  question  String
+  options   MCQOption[]
+
+  problem   Problem      @relation(fields: [problemId], references: [id])
+}
+
+model MCQOption {
+  id         String  @id @default(cuid())
+  mcqId      String
+  text       String
+  isCorrect  Boolean @default(false)
+
+  mcq        MCQ     @relation(fields: [mcqId], references: [id])
+}
