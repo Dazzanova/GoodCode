@@ -1,10 +1,17 @@
 {
   "name": "goodcode",
   "version": "1.0.0",
-  "description": "leetcode, but better!",
-  "main": "index.js",
+  "private": true,
+  "description": "Practice with intent - A production-quality DSA learning platform",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "npm -C apps/web run dev",
+    "build": "npm -C apps/web run build",
+    "start": "npm -C apps/web run start",
+    "lint": "npm -C apps/web run lint",
+    "db:generate": "npm -C apps/web run db:generate",
+    "db:migrate": "npm -C apps/web run db:migrate",
+    "db:seed": "npm -C apps/web run db:seed",
+    "db:studio": "npm -C apps/web run db:studio"
   },
   "repository": {
     "type": "git",
@@ -12,8 +19,10 @@
   },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/AnandNair4/GoodCode/issues"
+  "devDependencies": {
+    "prisma": "^8.0.0-rc.12"
   },
-  "homepage": "https://github.com/AnandNair4/GoodCode#readme"
+  "dependencies": {
+    "@prisma/client": "^7.10.0"
+  }
 }
