@@ -1,10 +1,11 @@
-// app/problems/[slug]/page.tsx
 import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { getProblemBySlug } from "@/lib/services/problems";
 import { SolvePanel } from "@/components/problem/solve-panel";
 import { NotePanel } from "@/components/problem/note-panel";
 import { getNoteForProblem } from "@/lib/services/notes";
+import { MCQPanel } from "@/components/problem/mcq-panel";
+import { getMCQsForProblem } from "@/lib/services/mcqs";
 
 const difficultyColor: Record<string, string> = {
   EASY: "text-emerald-500",
@@ -24,10 +25,11 @@ export default async function ProblemDetailPage({
 
   if (!problem) notFound();
 
+  const mcqs = await getMCQsForProblem(problem.id);
+
   const existingNote = session?.user?.id
     ? await getNoteForProblem(session.user.id, problem.id)
     : null;
-
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
@@ -109,6 +111,7 @@ export default async function ProblemDetailPage({
           <p className="mt-2 text-sm text-zinc-600">No solution available.</p>
         )}
       </div>
+        <MCQPanel mcqs={mcqs} />
     </div>
   );
 }
