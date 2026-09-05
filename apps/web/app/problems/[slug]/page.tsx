@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { getProblemBySlug } from "@/lib/services/problems";
 import { SolvePanel } from "@/components/problem/solve-panel";
+import { NotePanel } from "@/components/problem/note-panel";
+import { getNoteForProblem } from "@/lib/services/notes";
 
 const difficultyColor: Record<string, string> = {
   EASY: "text-emerald-500",
@@ -21,6 +23,11 @@ export default async function ProblemDetailPage({
   const problem = await getProblemBySlug(slug, session?.user?.id);
 
   if (!problem) notFound();
+
+  const existingNote = session?.user?.id
+    ? await getNoteForProblem(session.user.id, problem.id)
+    : null;
+
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
@@ -51,6 +58,14 @@ export default async function ProblemDetailPage({
         slug={problem.slug}
         isAuthenticated={!!session?.user}
         />
+
+        {session?.user && (
+        <NotePanel
+          problemId={problem.id}
+          slug={problem.slug}
+          initialContent={existingNote?.content ?? ""}
+        />
+      )}
 
       <div className="mt-10 border-t border-zinc-800 pt-6">
         <h2 className="text-sm font-medium text-zinc-400">Hints</h2>
