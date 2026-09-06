@@ -1,9 +1,10 @@
-// app/admin/problems/[id]/edit/page.tsx
 import { notFound } from "next/navigation";
 import { ProblemForm } from "@/components/admin/problem-form";
 import { SolutionForm } from "@/components/admin/solution-form";
+import { HintsManager } from "@/components/admin/hints-manager";
 import { getAllTopics, getProblemForEdit } from "@/lib/services/admin-problems";
 import { getSolutionForProblem } from "@/lib/services/admin-solutions";
+import { getHintsForProblem } from "@/lib/services/admin-hints";
 import { updateProblemAction } from "../../actions";
 
 export default async function EditProblemPage({
@@ -12,10 +13,11 @@ export default async function EditProblemPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const [problem, topics, solution] = await Promise.all([
+  const [problem, topics, solution, hints] = await Promise.all([
     getProblemForEdit(id),
     getAllTopics(),
     getSolutionForProblem(id),
+    getHintsForProblem(id),
   ]);
 
   if (!problem) notFound();
@@ -30,6 +32,11 @@ export default async function EditProblemPage({
       <div className="mt-10 border-t border-zinc-800 pt-6">
         <h2 className="text-lg font-medium text-zinc-100">Solution</h2>
         <SolutionForm problemId={problem.id} defaults={solution} />
+      </div>
+
+      <div className="mt-10 border-t border-zinc-800 pt-6">
+        <h2 className="text-lg font-medium text-zinc-100">Hints</h2>
+        <HintsManager problemId={problem.id} hints={hints} />
       </div>
     </div>
   );

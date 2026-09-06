@@ -7,6 +7,8 @@ import { upsertProblemSchema } from "@/lib/validations/admin-problem";
 import { createProblem, updateProblem } from "@/lib/services/admin-problems";
 import { upsertSolutionSchema } from "@/lib/validations/admin-solution";
 import { upsertSolution } from "@/lib/services/admin-solutions";
+import { createHintSchema, updateHintSchema, deleteHintSchema } from "@/lib/validations/admin-hint";
+import { createHint, updateHint, deleteHint } from "@/lib/services/admin-hints";
 
 async function requireAdmin() {
   const session = await auth();
@@ -66,4 +68,59 @@ export async function upsertSolutionAction(formData: FormData) {
 
   const problemId = formData.get("problemId");
   revalidatePath(`/admin/problems/${problemId}/edit`);
+}
+
+export async function createHintAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = createHintSchema.safeParse({
+    problemId: formData.get("problemId"),
+    content: formData.get("content"),
+  });
+
+  if (!parsed.success) {
+    throw new Error(parsed.error.errors[0]?.message ?? "Invalid hint");
+  }
+
+  await createHint(parsed.data);
+  revalidatePath(`/admin/problems/${parsed.data.problemId}/edit`);
+}
+
+export async function updateHintAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = updateHintSchema.safeParse({
+    hintId: formData.get("hintId"),
+    content: formData.get("content"),
+  });
+
+  if (!parsed.success) {
+    throw new Error(parsed.error.errors[0]?.message ?? "Invalid hint");
+  }
+
+  await updateHint(parsed.data);
+
+  const problemId = formData.get("problemId");
+  if (typeof problemId === "string") {
+    revalidatePath(`/admin/problems/${problemId}/edit`);
+  }
+}
+
+export async function deleteHintAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = deleteHintSchema.safeParse({
+    hintId: formData.get("hintId"),
+  });
+
+  if (!parsed.success) {
+    throw new Error("Invalid hint id");
+  }
+
+  await deleteHint(parsed.data.hintId);
+
+  const problemId = formData.get("problemId");
+  if (typeof problemId === "string") {
+    revalidatePath(`/admin/problems/${problemId}/edit`);
+  }
 }
