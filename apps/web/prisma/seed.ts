@@ -1,8 +1,9 @@
-// prisma/seed.ts
 import { PrismaClient, Difficulty } from "@prisma/client";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
+
+const daysAgo = (n: number) => new Date(Date.now() - n * 24 * 60 * 60 * 1000);
 
 async function main() {
   // ---------- Users ----------
@@ -305,7 +306,368 @@ int numIslands(vector<vector<char>>& grid) {
         },
       ],
     },
+    {
+      title: "Container With Most Water",
+      slug: "container-with-most-water",
+      description:
+        "Given n non-negative integers representing heights of vertical lines, find two lines that together with the x-axis form a container holding the most water.",
+      constraints: "2 <= height.length <= 10^5",
+      difficulty: "MEDIUM",
+      topic: "Arrays",
+      patternNames: ["Two Pointers"],
+      hints: [
+        "Checking every pair is O(n^2) — what determines whether moving the left or right boundary could help?",
+        "The shorter line is always the limiting factor. What happens if you move the taller one inward instead?",
+      ],
+      solutionEditorial:
+        "Start with two pointers at both ends. Always move the pointer at the shorter line inward, since moving the taller one can only decrease or keep the same area.",
+      solutionCode: `int maxArea(vector<int>& height) {
+    int l = 0, r = height.size() - 1, best = 0;
+    while (l < r) {
+        int area = min(height[l], height[r]) * (r - l);
+        best = max(best, area);
+        if (height[l] < height[r]) l++;
+        else r--;
+    }
+    return best;
+}`,
+      mcqs: [
+        {
+          question: "Why do we always move the pointer at the shorter line?",
+          options: [
+            { text: "The shorter line caps the area regardless of the other side, so keeping it can't improve the result", isCorrect: true },
+            { text: "It guarantees a sorted array", isCorrect: false },
+            { text: "It reduces memory usage", isCorrect: false },
+            { text: "It avoids integer overflow", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Valid Palindrome",
+      slug: "valid-palindrome",
+      description:
+        "Given a string, determine if it is a palindrome after converting to lowercase and removing all non-alphanumeric characters.",
+      constraints: "1 <= s.length <= 2 * 10^5",
+      difficulty: "EASY",
+      topic: "Strings",
+      patternNames: ["Two Pointers"],
+      hints: [
+        "Do you need to build a cleaned copy of the string first, or can you skip invalid characters while comparing?",
+        "Two pointers moving inward from both ends can check both conditions at once.",
+      ],
+      solutionEditorial:
+        "Use two pointers from both ends, skipping non-alphanumeric characters, comparing lowercased characters until they meet.",
+      solutionCode: `bool isPalindrome(string s) {
+    int l = 0, r = (int)s.size() - 1;
+    while (l < r) {
+        while (l < r && !isalnum(s[l])) l++;
+        while (l < r && !isalnum(s[r])) r--;
+        if (tolower(s[l]) != tolower(s[r])) return false;
+        l++; r--;
+    }
+    return true;
+}`,
+      mcqs: [
+        {
+          question: "What is the space complexity of the two-pointer approach (no extra string built)?",
+          options: [
+            { text: "O(1)", isCorrect: true },
+            { text: "O(n)", isCorrect: false },
+            { text: "O(n log n)", isCorrect: false },
+            { text: "O(n^2)", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Subarray Sum Equals K",
+      slug: "subarray-sum-equals-k",
+      description: "Given an array of integers and an integer k, find the total number of contiguous subarrays whose sum equals k.",
+      constraints: "1 <= nums.length <= 2 * 10^4",
+      difficulty: "MEDIUM",
+      topic: "Arrays",
+      patternNames: ["Prefix Sum", "Hashing"],
+      hints: [
+        "If you know the running sum up to index i, what earlier running sum would make a subarray ending at i equal k?",
+        "You need prefixSum[i] - prefixSum[j] = k, so prefixSum[j] = prefixSum[i] - k. Can a hash map help you count these efficiently?",
+      ],
+      solutionEditorial:
+        "Track running prefix sum and a hash map of how many times each prefix sum value has occurred. For each new sum, check how many earlier prefix sums equal (sum - k).",
+      solutionCode: `int subarraySum(vector<int>& nums, int k) {
+    unordered_map<int,int> count{{0,1}};
+    int sum = 0, total = 0;
+    for (int n : nums) {
+        sum += n;
+        total += count[sum - k];
+        count[sum]++;
+    }
+    return total;
+}`,
+      mcqs: [
+        {
+          question: "Why does the map start with {0: 1} before iterating?",
+          options: [
+            { text: "It accounts for subarrays starting from index 0 that sum exactly to k", isCorrect: true },
+            { text: "It prevents integer overflow", isCorrect: false },
+            { text: "It sorts the prefix sums", isCorrect: false },
+            { text: "It is unnecessary and can be removed", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Range Sum Query - Immutable",
+      slug: "range-sum-query-immutable",
+      description:
+        "Given an integer array, handle multiple queries that ask for the sum of elements between indices left and right, inclusive.",
+      constraints: "1 <= nums.length <= 10^4, up to 10^4 queries",
+      difficulty: "EASY",
+      topic: "Arrays",
+      patternNames: ["Prefix Sum"],
+      hints: [
+        "Recomputing the sum for every query is O(n) per query — can you precompute something once?",
+        "A prefix sum array lets you answer any range sum in O(1) after O(n) preprocessing.",
+      ],
+      solutionEditorial:
+        "Precompute prefix[i] = sum of nums[0..i-1]. Then sumRange(l, r) = prefix[r+1] - prefix[l].",
+      solutionCode: `vector<int> prefix;
+NumArray(vector<int>& nums) {
+    prefix.assign(nums.size() + 1, 0);
+    for (int i = 0; i < nums.size(); i++)
+        prefix[i+1] = prefix[i] + nums[i];
+}
+int sumRange(int l, int r) {
+    return prefix[r+1] - prefix[l];
+}`,
+      mcqs: [
+        {
+          question: "What is the query time complexity after preprocessing?",
+          options: [
+            { text: "O(1)", isCorrect: true },
+            { text: "O(n)", isCorrect: false },
+            { text: "O(log n)", isCorrect: false },
+            { text: "O(r - l)", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Best Time to Buy and Sell Stock",
+      slug: "best-time-to-buy-sell-stock",
+      description:
+        "Given an array of daily stock prices, find the maximum profit from buying on one day and selling on a later day.",
+      constraints: "1 <= prices.length <= 10^5",
+      difficulty: "EASY",
+      topic: "Arrays",
+      patternNames: ["Greedy"],
+      hints: [
+        "For each day, what's the best possible profit if you sold today?",
+        "That depends only on the lowest price seen so far — do you need to check every earlier day again?",
+      ],
+      solutionEditorial:
+        "Track the minimum price seen so far while scanning. At each day, compute profit if selling today and keep the max.",
+      solutionCode: `int maxProfit(vector<int>& prices) {
+    int minPrice = INT_MAX, best = 0;
+    for (int p : prices) {
+        minPrice = min(minPrice, p);
+        best = max(best, p - minPrice);
+    }
+    return best;
+}`,
+      mcqs: [
+        {
+          question: "Why is this considered a greedy approach?",
+          options: [
+            { text: "At each step we make the locally optimal choice (track the lowest price so far) without reconsidering past decisions", isCorrect: true },
+            { text: "It uses recursion to try every combination", isCorrect: false },
+            { text: "It sorts the prices first", isCorrect: false },
+            { text: "It requires a priority queue", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Jump Game",
+      slug: "jump-game",
+      description:
+        "Given an array where each element represents your maximum jump length from that position, determine if you can reach the last index starting from index 0.",
+      constraints: "1 <= nums.length <= 10^4",
+      difficulty: "MEDIUM",
+      topic: "Arrays",
+      patternNames: ["Greedy"],
+      hints: [
+        "Do you need to try every possible sequence of jumps, or can you track the furthest reachable index as you scan?",
+        "At each index, if it's within your current reach, update the furthest index you could ever reach from there.",
+      ],
+      solutionEditorial:
+        "Track the furthest reachable index while scanning left to right. If the current index ever exceeds the furthest reachable point, it's impossible.",
+      solutionCode: `bool canJump(vector<int>& nums) {
+    int reach = 0;
+    for (int i = 0; i < nums.size(); i++) {
+        if (i > reach) return false;
+        reach = max(reach, i + nums[i]);
+    }
+    return true;
+}`,
+      mcqs: [
+        {
+          question: "What does it mean if index i > reach during the scan?",
+          options: [
+            { text: "Index i is unreachable from any earlier position, so the end can't be reached", isCorrect: true },
+            { text: "The array is not sorted", isCorrect: false },
+            { text: "nums[i] must be zero", isCorrect: false },
+            { text: "It means the answer is always true", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Merge Intervals",
+      slug: "merge-intervals",
+      description: "Given an array of intervals, merge all overlapping intervals and return the resulting non-overlapping intervals.",
+      constraints: "1 <= intervals.length <= 10^4",
+      difficulty: "MEDIUM",
+      topic: "Arrays",
+      patternNames: ["Greedy"],
+      hints: [
+        "Overlaps are hard to detect in arbitrary order — what if the intervals were sorted by start time first?",
+        "Once sorted, you only ever need to compare each interval to the last one you've already merged.",
+      ],
+      solutionEditorial:
+        "Sort intervals by start time. Iterate through, merging into the last interval in the result if it overlaps, otherwise appending a new one.",
+      solutionCode: `vector<vector<int>> merge(vector<vector<int>>& intervals) {
+    sort(intervals.begin(), intervals.end());
+    vector<vector<int>> result;
+    for (auto& iv : intervals) {
+        if (!result.empty() && iv[0] <= result.back()[1])
+            result.back()[1] = max(result.back()[1], iv[1]);
+        else
+            result.push_back(iv);
+    }
+    return result;
+}`,
+      mcqs: [
+        {
+          question: "Why is sorting by start time the key first step?",
+          options: [
+            { text: "It guarantees any interval that could overlap the current one is either the last merged one or comes right after", isCorrect: true },
+            { text: "It removes duplicate intervals", isCorrect: false },
+            { text: "It reduces the problem to binary search", isCorrect: false },
+            { text: "Sorting is required by the output format", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Subsets",
+      slug: "subsets",
+      description: "Given an array of unique integers, return all possible subsets (the power set).",
+      constraints: "1 <= nums.length <= 10",
+      difficulty: "MEDIUM",
+      topic: "Backtracking",
+      patternNames: ["Backtracking"],
+      hints: [
+        "At each element, you have exactly two choices — what are they?",
+        "Include the element or exclude it, then recurse on the rest. Backtrack by undoing the choice after exploring it.",
+      ],
+      solutionEditorial:
+        "For each element, recursively branch into 'include it' and 'exclude it', adding the current subset to results at each recursive call.",
+      solutionCode: `void backtrack(vector<int>& nums, int idx, vector<int>& current, vector<vector<int>>& result) {
+    if (idx == nums.size()) { result.push_back(current); return; }
+    current.push_back(nums[idx]);
+    backtrack(nums, idx + 1, current, result);
+    current.pop_back();
+    backtrack(nums, idx + 1, current, result);
+}`,
+      mcqs: [
+        {
+          question: "How many total subsets exist for an array of size n?",
+          options: [
+            { text: "2^n", isCorrect: true },
+            { text: "n!", isCorrect: false },
+            { text: "n^2", isCorrect: false },
+            { text: "2n", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Permutations",
+      slug: "permutations",
+      description: "Given an array of distinct integers, return all possible permutations.",
+      constraints: "1 <= nums.length <= 6",
+      difficulty: "MEDIUM",
+      topic: "Backtracking",
+      patternNames: ["Backtracking"],
+      hints: [
+        "How do you avoid reusing an element that's already placed in the current permutation?",
+        "Track which elements are already used, and backtrack by marking them unused again after exploring.",
+      ],
+      solutionEditorial:
+        "Recursively build permutations by trying each unused element at each position, marking it used, recursing, then unmarking (backtracking) before trying the next option.",
+      solutionCode: `void backtrack(vector<int>& nums, vector<int>& current, vector<bool>& used, vector<vector<int>>& result) {
+    if (current.size() == nums.size()) { result.push_back(current); return; }
+    for (int i = 0; i < nums.size(); i++) {
+        if (used[i]) continue;
+        used[i] = true;
+        current.push_back(nums[i]);
+        backtrack(nums, current, used, result);
+        current.pop_back();
+        used[i] = false;
+    }
+}`,
+      mcqs: [
+        {
+          question: "What is the time complexity of generating all permutations?",
+          options: [
+            { text: "O(n!)", isCorrect: true },
+            { text: "O(2^n)", isCorrect: false },
+            { text: "O(n^2)", isCorrect: false },
+            { text: "O(n log n)", isCorrect: false },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Course Schedule",
+      slug: "course-schedule",
+      description:
+        "Given a number of courses and a list of prerequisite pairs, determine if it's possible to finish all courses (detect if the prerequisite graph has a cycle).",
+      constraints: "1 <= numCourses <= 2000",
+      difficulty: "MEDIUM",
+      topic: "Graphs",
+      patternNames: ["BFS", "DFS"],
+      hints: [
+        "This is really asking: does the dependency graph contain a cycle?",
+        "Track nodes currently in the recursion path (being visited) separately from fully finished nodes — a cycle exists if you revisit a node still in the current path.",
+      ],
+      solutionEditorial:
+        "Model courses as a directed graph. Run DFS tracking 'visiting' vs 'visited' states — if DFS revisits a node currently marked 'visiting', a cycle exists and courses can't be finished.",
+      solutionCode: `bool dfs(int node, vector<vector<int>>& graph, vector<int>& state) {
+    if (state[node] == 1) return false; // cycle
+    if (state[node] == 2) return true;  // already processed
+    state[node] = 1;
+    for (int next : graph[node])
+        if (!dfs(next, graph, state)) return false;
+    state[node] = 2;
+    return true;
+}`,
+      mcqs: [
+        {
+          question: "What does finding a cycle in the prerequisite graph mean?",
+          options: [
+            { text: "It's impossible to complete all courses, since some depend on each other circularly", isCorrect: true },
+            { text: "There are duplicate courses", isCorrect: false },
+            { text: "The graph is disconnected", isCorrect: false },
+            { text: "All courses can be completed in any order", isCorrect: false },
+          ],
+        },
+      ],
+    },
   ];
+
+  const createdProblems: Record<string, { id: string }> = {};
 
   for (const p of problemSeeds) {
     const problem = await prisma.problem.upsert({
@@ -342,7 +704,101 @@ int numIslands(vector<vector<char>>& grid) {
       },
     });
 
+    createdProblems[p.slug] = problem;
     console.log(`Seeded: ${problem.title}`);
+  }
+
+  // ---------- Backdated demo submission history ----------
+  // This gives the demo user a realistic mix of states — solved long ago,
+  // solved recently, attempted-but-unsolved, and never touched — so future
+  // features like Daily Practice / Revision / Weak Areas have real variance
+  // to compute against instead of an empty or uniform dataset.
+  //
+  // Deliberately NOT touching two-sum / max-subarray-sum-k / etc. here,
+  // since those already have real submission history from manual testing
+  // earlier in development. Only new problems get backdated history.
+
+  type HistoryEntry = {
+    slug: string;
+    daysAgoSolved?: number;
+    attemptsOnly?: number; // attempted N times, never solved
+  };
+
+  const history: HistoryEntry[] = [
+    { slug: "container-with-most-water", daysAgoSolved: 22 },
+    { slug: "valid-palindrome", daysAgoSolved: 20 },
+    { slug: "subarray-sum-equals-k", daysAgoSolved: 18 },
+    { slug: "best-time-to-buy-sell-stock", daysAgoSolved: 14 },
+    { slug: "merge-intervals", daysAgoSolved: 2 },
+    { slug: "jump-game", attemptsOnly: 2 },
+    // range-sum-query-immutable, subsets, permutations, course-schedule:
+    // intentionally left untouched — never attempted by demo user.
+  ];
+
+  for (const h of history) {
+    const problem = createdProblems[h.slug];
+    if (!problem) continue;
+
+    if (h.daysAgoSolved !== undefined) {
+      const solvedDate = daysAgo(h.daysAgoSolved);
+
+      await prisma.submission.create({
+        data: {
+          userId: demoUser.id,
+          problemId: problem.id,
+          code: "// solved during seed history generation",
+          language: "cpp",
+          status: "ACCEPTED",
+          timeSpentS: 300 + Math.floor(Math.random() * 900),
+          submittedAt: solvedDate,
+        },
+      });
+
+      await prisma.problemProgress.upsert({
+        where: { userId_problemId: { userId: demoUser.id, problemId: problem.id } },
+        create: {
+          userId: demoUser.id,
+          problemId: problem.id,
+          status: "SOLVED",
+          attempts: 1,
+          firstAttemptAt: solvedDate,
+          lastAttemptAt: solvedDate,
+          solvedAt: solvedDate,
+        },
+        update: {},
+      });
+    } else if (h.attemptsOnly !== undefined) {
+      const attemptDate = daysAgo(5);
+
+      for (let i = 0; i < h.attemptsOnly; i++) {
+        await prisma.submission.create({
+          data: {
+            userId: demoUser.id,
+            problemId: problem.id,
+            code: "// unsuccessful attempt during seed history generation",
+            language: "cpp",
+            status: "WRONG_ANSWER",
+            timeSpentS: 200 + Math.floor(Math.random() * 400),
+            submittedAt: attemptDate,
+          },
+        });
+      }
+
+      await prisma.problemProgress.upsert({
+        where: { userId_problemId: { userId: demoUser.id, problemId: problem.id } },
+        create: {
+          userId: demoUser.id,
+          problemId: problem.id,
+          status: "ATTEMPTED",
+          attempts: h.attemptsOnly,
+          firstAttemptAt: attemptDate,
+          lastAttemptAt: attemptDate,
+        },
+        update: {},
+      });
+    }
+
+    console.log(`History seeded: ${h.slug}`);
   }
 
   console.log("Done. Demo credentials:");
