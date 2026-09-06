@@ -9,6 +9,8 @@ import { upsertSolutionSchema } from "@/lib/validations/admin-solution";
 import { upsertSolution } from "@/lib/services/admin-solutions";
 import { createHintSchema, updateHintSchema, deleteHintSchema } from "@/lib/validations/admin-hint";
 import { createHint, updateHint, deleteHint } from "@/lib/services/admin-hints";
+import { createMCQSchema, deleteMCQSchema } from "@/lib/validations/admin-mcq";
+import { createMCQ, deleteMCQ } from "@/lib/services/admin-mcqs";
 
 async function requireAdmin() {
   const session = await auth();
@@ -118,6 +120,46 @@ export async function deleteHintAction(formData: FormData) {
   }
 
   await deleteHint(parsed.data.hintId);
+
+  const problemId = formData.get("problemId");
+  if (typeof problemId === "string") {
+    revalidatePath(`/admin/problems/${problemId}/edit`);
+  }
+}
+
+export async function createMCQAction(formData: FormData) {
+  await requireAdmin();
+
+  const optionsRaw = formData.get("optionsJson");
+  const options = typeof optionsRaw === "string" ? JSON.parse(optionsRaw) : [];
+
+  const parsed = createMCQSchema.safeParse({
+    problemId: formData.get("problemId"),
+    question: formData.get("question"),
+    options,
+  });
+
+  if (!parsed.success) {
+    throw new Error(parsed.error.errors[0]?.message ?? "Invalid MCQ");
+  }
+
+  await createMCQ(parsed.data);
+
+  const problemId = formData.get("problemId");
+  if (typeof problemId === "string") {
+    revalidatePath(`/admin/problems/${problemId}/edit`);
+  }
+}
+
+export async function deleteMCQAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = deleteMCQSchema.safeParse({ mcqId: formData.get("mcqId") });
+  if (!parsed.success) {
+    throw new Error("Invalid MCQ id");
+  }
+
+  await deleteMCQ(parsed.data.mcqId);
 
   const problemId = formData.get("problemId");
   if (typeof problemId === "string") {
