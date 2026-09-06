@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { upsertProblemSchema } from "@/lib/validations/admin-problem";
 import { createProblem, updateProblem } from "@/lib/services/admin-problems";
+import { upsertSolutionSchema } from "@/lib/validations/admin-solution";
+import { upsertSolution } from "@/lib/services/admin-solutions";
 
 async function requireAdmin() {
   const session = await auth();
@@ -45,4 +47,23 @@ export async function updateProblemAction(id: string, formData: FormData) {
   await updateProblem(id, data);
   revalidatePath("/admin/problems");
   redirect("/admin/problems");
+}
+
+export async function upsertSolutionAction(formData: FormData) {
+  await requireAdmin();
+
+  const parsed = upsertSolutionSchema.safeParse({
+    problemId: formData.get("problemId"),
+    editorial: formData.get("editorial"),
+    codeSnippet: formData.get("codeSnippet") || undefined,
+  });
+
+  if (!parsed.success) {
+    throw new Error(parsed.error.errors[0]?.message ?? "Invalid solution data");
+  }
+
+  await upsertSolution(parsed.data);
+
+  const problemId = formData.get("problemId");
+  revalidatePath(`/admin/problems/${problemId}/edit`);
 }
