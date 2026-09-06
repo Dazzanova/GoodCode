@@ -1,7 +1,7 @@
-// app/problems/page.tsx
 import Link from "next/link";
-import { getPublishedProblems } from "@/lib/services/problems";
+import { getPublishedProblems, getFilterOptions } from "@/lib/services/problems";
 import { problemFiltersSchema } from "@/lib/validations/problem";
+import { ProblemFilters } from "@/components/problem/problem-filters";
 
 const difficultyColor: Record<string, string> = {
   EASY: "text-emerald-500",
@@ -16,14 +16,20 @@ export default async function ProblemsPage({
 }) {
   const params = await searchParams;
   const filters = problemFiltersSchema.parse(params);
-  const { problems, total, page, totalPages } = await getPublishedProblems(filters);
+
+  const [{ problems, total, page, totalPages }, { topics, patterns }] = await Promise.all([
+    getPublishedProblems(filters),
+    getFilterOptions(),
+  ]);
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <h1 className="text-2xl font-semibold text-zinc-100">Problems</h1>
       <p className="mt-1 text-sm text-zinc-500">{total} problems available</p>
 
-      <div className="mt-8 overflow-hidden rounded-lg border border-zinc-800">
+      <ProblemFilters topics={topics} patterns={patterns} />
+
+      <div className="mt-6 overflow-hidden rounded-lg border border-zinc-800">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-zinc-800 text-left text-zinc-500">
@@ -58,6 +64,12 @@ export default async function ProblemsPage({
             ))}
           </tbody>
         </table>
+
+        {problems.length === 0 && (
+          <p className="px-4 py-8 text-center text-sm text-zinc-600">
+            No problems match these filters.
+          </p>
+        )}
       </div>
 
       {totalPages > 1 && (

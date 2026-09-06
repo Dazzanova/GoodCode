@@ -101,3 +101,11 @@ export async function getProblemBySlug(slug: string, userId?: string) {
     solution,
   };
 }
+
+export async function getFilterOptions() {
+  const [topics, patterns] = await Promise.all([
+    prisma.topic.findMany({ select: { name: true, slug: true }, orderBy: { name: "asc" } }),
+    prisma.pattern.findMany({ select: { name: true, slug: true }, orderBy: { name: "asc" } }),
+  ]);
+  return { topics, patterns };
+}
