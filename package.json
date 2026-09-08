@@ -15,14 +15,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/AnandNair4/GoodCode.git"
+    "url": "git+https://github.com/Dazzanova/GoodCode.git"
   },
   "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "prisma": "^8.0.0-rc.12"
-  },
-  "dependencies": {
-    "@prisma/client": "^7.10.0"
-  }
+  "license": "ISC"
 }
