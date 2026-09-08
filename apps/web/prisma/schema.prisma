@@ -130,6 +130,7 @@ model ProblemProgress {
   firstAttemptAt DateTime?
   lastAttemptAt  DateTime?
   solvedAt       DateTime?
+  nextReviewAt   DateTime?
 
   user           User    @relation(fields: [userId], references: [id])
   problem        Problem @relation(fields: [problemId], references: [id])

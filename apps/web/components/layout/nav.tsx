@@ -12,6 +12,11 @@ export async function Nav() {
           <Link href="/" className="text-sm font-semibold text-zinc-100">
             GoodCode
           </Link>
+          {session?.user && (
+            <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-zinc-200">
+              Dashboard
+            </Link>
+          )}
           <Link href="/problems" className="text-sm text-zinc-400 hover:text-zinc-200">
             Problems
           </Link>

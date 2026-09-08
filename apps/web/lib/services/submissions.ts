@@ -1,6 +1,11 @@
-// lib/services/submissions.ts
 import { prisma } from "@/lib/db/prisma";
 import type { CreateSubmissionInput } from "@/lib/validations/submission";
+
+function computeReviewIntervalDays(attempts: number): number {
+  if (attempts <= 1) return 10;
+  if (attempts <= 3) return 5;
+  return 2;
+}
 
 export async function createSubmission(userId: string, input: CreateSubmissionInput) {
   const { problemId, code, language, timeSpentS } = input;
@@ -14,6 +19,11 @@ export async function createSubmission(userId: string, input: CreateSubmissionIn
       where: { userId_problemId: { userId, problemId } },
     });
 
+    const newAttempts = (existing?.attempts ?? 0) + 1;
+    const now = new Date();
+    const intervalDays = computeReviewIntervalDays(newAttempts);
+    const nextReviewAt = new Date(now.getTime() + intervalDays * 24 * 60 * 60 * 1000);
+
     await tx.problemProgress.upsert({
       where: { userId_problemId: { userId, problemId } },
       create: {
@@ -21,15 +31,17 @@ export async function createSubmission(userId: string, input: CreateSubmissionIn
         problemId,
         status: "SOLVED",
         attempts: 1,
-        firstAttemptAt: new Date(),
-        lastAttemptAt: new Date(),
-        solvedAt: new Date(),
+        firstAttemptAt: now,
+        lastAttemptAt: now,
+        solvedAt: now,
+        nextReviewAt,
       },
       update: {
         attempts: { increment: 1 },
-        lastAttemptAt: new Date(),
+        lastAttemptAt: now,
         status: "SOLVED",
-        solvedAt: existing?.solvedAt ?? new Date(),
+        solvedAt: existing?.solvedAt ?? now,
+        nextReviewAt,
       },
     });
 
