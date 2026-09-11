@@ -1,4 +1,3 @@
-// components/layout/nav.tsx
 import Link from "next/link";
 import { auth, signOut } from "@/auth";
 
@@ -13,9 +12,14 @@ export async function Nav() {
             GoodCode
           </Link>
           {session?.user && (
-            <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-zinc-200">
-              Dashboard
-            </Link>
+            <>
+              <Link href="/dashboard" className="text-sm text-zinc-400 hover:text-zinc-200">
+                Dashboard
+              </Link>
+              <Link href="/revision" className="text-sm text-zinc-400 hover:text-zinc-200">
+                Revision
+              </Link>
+            </>
           )}
           <Link href="/problems" className="text-sm text-zinc-400 hover:text-zinc-200">
             Problems

@@ -1,4 +1,5 @@
 import { PrismaClient, Difficulty } from "@prisma/client";
+import { computeReviewIntervalDays } from "../lib/scheduling";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();
@@ -739,8 +740,10 @@ int sumRange(int l, int r) {
     const problem = createdProblems[h.slug];
     if (!problem) continue;
 
-    if (h.daysAgoSolved !== undefined) {
+        if (h.daysAgoSolved !== undefined) {
       const solvedDate = daysAgo(h.daysAgoSolved);
+      const intervalDays = computeReviewIntervalDays(1); // seeded with attempts: 1
+      const nextReviewAt = new Date(solvedDate.getTime() + intervalDays * 24 * 60 * 60 * 1000);
 
       await prisma.submission.create({
         data: {
@@ -764,8 +767,9 @@ int sumRange(int l, int r) {
           firstAttemptAt: solvedDate,
           lastAttemptAt: solvedDate,
           solvedAt: solvedDate,
+          nextReviewAt,
         },
-        update: {},
+        update: { nextReviewAt },
       });
     } else if (h.attemptsOnly !== undefined) {
       const attemptDate = daysAgo(5);

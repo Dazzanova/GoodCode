@@ -1,11 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import type { CreateSubmissionInput } from "@/lib/validations/submission";
-
-function computeReviewIntervalDays(attempts: number): number {
-  if (attempts <= 1) return 10;
-  if (attempts <= 3) return 5;
-  return 2;
-}
+import { computeReviewIntervalDays } from "@/lib/scheduling";
 
 export async function createSubmission(userId: string, input: CreateSubmissionInput) {
   const { problemId, code, language, timeSpentS } = input;
