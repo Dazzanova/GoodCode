@@ -19,6 +19,9 @@ export async function Nav() {
               <Link href="/revision" className="text-sm text-zinc-400 hover:text-zinc-200">
                 Revision
               </Link>
+              <Link href="/weak-areas" className="text-sm text-zinc-400 hover:text-zinc-200">
+                Weak Areas
+              </Link>
             </>
           )}
           <Link href="/problems" className="text-sm text-zinc-400 hover:text-zinc-200">
