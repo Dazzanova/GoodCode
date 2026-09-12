@@ -1,8 +1,8 @@
-// components/problem/solve-panel.tsx
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
 import { submitSolution } from "@/app/problems/[slug]/actions";
+import { Button } from "@/components/ui/button";
 
 const STARTER_CPP = `class Solution {\npublic:\n    // write your solution here\n};`;
 
@@ -33,7 +33,7 @@ export function SolvePanel({
 
   if (!isAuthenticated) {
     return (
-      <div className="mt-10 rounded-lg border border-zinc-800 p-6 text-center text-sm text-zinc-500">
+      <div className="mt-10 rounded-lg border border-border p-6 text-center text-sm text-muted">
         Sign in to start solving this problem.
       </div>
     );
@@ -51,10 +51,10 @@ export function SolvePanel({
   };
 
   return (
-    <div className="mt-10 border-t border-zinc-800 pt-6">
+    <div className="mt-10 border-t border-border pt-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-sm font-medium text-zinc-400">Solve</h2>
-        <span className="font-mono text-sm text-zinc-500">{formatTime(seconds)}</span>
+        <h2 className="text-sm font-medium text-muted">Solve</h2>
+        <span className="font-mono text-sm text-muted">{formatTime(seconds)}</span>
       </div>
 
       <form action={handleSubmit} className="mt-4 space-y-3">
@@ -69,18 +69,14 @@ export function SolvePanel({
           onChange={(e) => setCode(e.target.value)}
           rows={14}
           spellCheck={false}
-          className="w-full rounded-md border border-zinc-800 bg-zinc-950 p-4 font-mono text-sm text-zinc-200 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+          className="w-full rounded-md border border-border bg-background p-4 font-mono text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
         />
 
-        {error && <p className="text-sm text-rose-500">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-md bg-zinc-100 px-4 py-2 text-sm font-medium text-zinc-900 hover:bg-white disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isPending}>
           {isPending ? "Submitting..." : "Submit"}
-        </button>
+        </Button>
       </form>
     </div>
   );

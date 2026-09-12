@@ -21,12 +21,15 @@ export function ProblemFilters({
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
-    params.delete("page"); // reset pagination whenever filters change
+    params.delete("page");
 
     startTransition(() => {
       router.push(`${pathname}?${params.toString()}`);
     });
   };
+
+  const selectClass =
+    "rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent";
 
   return (
     <div className="mt-6 flex flex-wrap gap-3">
@@ -35,13 +38,13 @@ export function ProblemFilters({
         defaultValue={searchParams.get("search") ?? ""}
         onChange={(e) => updateParam("search", e.target.value)}
         placeholder="Search problems..."
-        className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm text-zinc-200"
+        className={selectClass}
       />
 
       <select
         defaultValue={searchParams.get("topicSlug") ?? ""}
         onChange={(e) => updateParam("topicSlug", e.target.value)}
-        className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm text-zinc-300"
+        className={selectClass}
       >
         <option value="">All Topics</option>
         {topics.map((t) => (
@@ -52,7 +55,7 @@ export function ProblemFilters({
       <select
         defaultValue={searchParams.get("patternSlug") ?? ""}
         onChange={(e) => updateParam("patternSlug", e.target.value)}
-        className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm text-zinc-300"
+        className={selectClass}
       >
         <option value="">All Patterns</option>
         {patterns.map((p) => (
@@ -63,7 +66,7 @@ export function ProblemFilters({
       <select
         defaultValue={searchParams.get("difficulty") ?? ""}
         onChange={(e) => updateParam("difficulty", e.target.value)}
-        className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-sm text-zinc-300"
+        className={selectClass}
       >
         <option value="">All Difficulties</option>
         <option value="EASY">Easy</option>
@@ -71,7 +74,7 @@ export function ProblemFilters({
         <option value="HARD">Hard</option>
       </select>
 
-      {isPending && <span className="self-center text-sm text-zinc-600">Loading...</span>}
+      {isPending && <span className="self-center text-sm text-muted">Loading...</span>}
     </div>
   );
 }

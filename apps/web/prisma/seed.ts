@@ -714,10 +714,6 @@ int sumRange(int l, int r) {
   // solved recently, attempted-but-unsolved, and never touched — so future
   // features like Daily Practice / Revision / Weak Areas have real variance
   // to compute against instead of an empty or uniform dataset.
-  //
-  // Deliberately NOT touching two-sum / max-subarray-sum-k / etc. here,
-  // since those already have real submission history from manual testing
-  // earlier in development. Only new problems get backdated history.
 
   type HistoryEntry = {
     slug: string;

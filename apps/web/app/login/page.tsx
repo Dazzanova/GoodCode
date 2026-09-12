@@ -1,8 +1,8 @@
-// app/login/page.tsx
 "use client";
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -21,11 +21,23 @@ export default function LoginPage() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-32">
-      <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" className="border p-2 rounded" />
-      <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password" className="border p-2 rounded" />
-      {error && <p className="text-red-500">{error}</p>}
-      <button type="submit" className="bg-black text-white p-2 rounded">Sign in</button>
+    <form onSubmit={handleSubmit} className="mx-auto mt-32 flex max-w-sm flex-col gap-4 px-6">
+      <h1 className="text-xl font-semibold text-foreground">Sign in</h1>
+      <input
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="email"
+        className="rounded-md border border-border bg-background p-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="password"
+        className="rounded-md border border-border bg-background p-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+      />
+      {error && <p className="text-sm text-danger">{error}</p>}
+      <Button type="submit">Sign in</Button>
     </form>
   );
 }

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getAllProblemsForAdmin } from "@/lib/services/admin-problems";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminProblemsPage() {
   const problems = await getAllProblemsForAdmin();
@@ -7,16 +8,16 @@ export default async function AdminProblemsPage() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-zinc-100">Manage Problems</h1>
-        <Link href="/admin/problems/new" className="rounded-md bg-zinc-100 px-3 py-1.5 text-sm font-medium text-zinc-900">
-          + New Problem
+        <h1 className="text-2xl font-semibold text-foreground">Manage Problems</h1>
+        <Link href="/admin/problems/new">
+          <Button>+ New Problem</Button>
         </Link>
       </div>
 
-      <div className="mt-6 overflow-hidden rounded-lg border border-zinc-800">
+      <div className="mt-6 overflow-hidden rounded-lg border border-border">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-zinc-800 text-left text-zinc-500">
+            <tr className="border-b border-border text-left text-muted">
               <th className="px-4 py-3">Title</th>
               <th className="px-4 py-3">Topic</th>
               <th className="px-4 py-3">Difficulty</th>
@@ -26,17 +27,17 @@ export default async function AdminProblemsPage() {
           </thead>
           <tbody>
             {problems.map((p) => (
-              <tr key={p.id} className="border-b border-zinc-800/50 last:border-0">
-                <td className="px-4 py-3 text-zinc-200">{p.title}</td>
-                <td className="px-4 py-3 text-zinc-500">{p.topic.name}</td>
-                <td className="px-4 py-3 text-zinc-500">{p.difficulty}</td>
+              <tr key={p.id} className="border-b border-border/60 last:border-0">
+                <td className="px-4 py-3 text-foreground">{p.title}</td>
+                <td className="px-4 py-3 text-muted">{p.topic.name}</td>
+                <td className="px-4 py-3 text-muted">{p.difficulty}</td>
                 <td className="px-4 py-3">
-                  <span className={p.published ? "text-emerald-500" : "text-zinc-600"}>
+                  <span className={p.published ? "text-success" : "text-muted"}>
                     {p.published ? "Published" : "Draft"}
                   </span>
                 </td>
                 <td className="px-4 py-3">
-                  <Link href={`/admin/problems/${p.id}/edit`} className="text-zinc-400 hover:text-zinc-200">
+                  <Link href={`/admin/problems/${p.id}/edit`} className="text-accent hover:underline">
                     Edit
                   </Link>
                 </td>

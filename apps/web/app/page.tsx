@@ -1,21 +1,32 @@
-// app/page.tsx
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+
+const samplePatterns = ["Two Pointers", "Sliding Window", "Hashing", "Backtracking"];
 
 export default function Home() {
   return (
-    <main className="mx-auto flex max-w-3xl flex-1 flex-col items-center justify-center px-6 text-center">
-      <h1 className="text-3xl font-semibold text-zinc-100">
+    <main className="mx-auto flex max-w-2xl flex-1 flex-col items-center justify-center px-6 py-24 text-center">
+      <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
         Practice with intent.
       </h1>
-      <p className="mt-3 max-w-md text-zinc-500">
-        GoodCode helps you recognize patterns, think before looking at
-        solutions, and actually retain what you solve.
+      <p className="mt-4 max-w-md text-muted">
+        Recognize the pattern, think before you look at the answer, and
+        actually remember what you solve.
       </p>
-      <Link
-        href="/problems"
-        className="mt-8 rounded-md bg-zinc-100 px-5 py-2.5 text-sm font-medium text-zinc-900 hover:bg-white"
-      >
-        Browse Problems
+
+      <div className="mt-6 flex flex-wrap justify-center gap-2">
+        {samplePatterns.map((p) => (
+          <span
+            key={p}
+            className="rounded-full border border-border px-3 py-1 font-mono text-xs text-muted"
+          >
+            {p}
+          </span>
+        ))}
+      </div>
+
+      <Link href="/problems" className="mt-10">
+        <Button variant="primary">Browse Problems</Button>
       </Link>
     </main>
   );

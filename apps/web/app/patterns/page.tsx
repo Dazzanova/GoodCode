@@ -6,8 +6,8 @@ export default async function PatternsPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-zinc-100">Patterns</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="text-2xl font-semibold text-foreground">Patterns</h1>
+      <p className="mt-1 text-sm text-muted">
         Recognize the pattern, not just the problem.
       </p>
 
@@ -16,10 +16,10 @@ export default async function PatternsPage() {
           <Link
             key={p.id}
             href={`/patterns/${p.slug}`}
-            className="rounded-lg border border-zinc-800 p-4 hover:border-zinc-700 hover:bg-zinc-900/50"
+            className="rounded-lg border border-border p-4 hover:border-accent/40 hover:bg-surface"
           >
-            <h2 className="font-medium text-zinc-200">{p.name}</h2>
-            <p className="mt-1 text-sm text-zinc-500">
+            <h2 className="font-medium text-foreground">{p.name}</h2>
+            <p className="mt-1 text-sm text-muted">
               {p._count.problems} problem{p._count.problems !== 1 ? "s" : ""}
             </p>
           </Link>

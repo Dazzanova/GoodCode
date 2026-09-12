@@ -1,8 +1,11 @@
-// components/admin/solution-form.tsx
 "use client";
 
 import { useState, useTransition } from "react";
 import { upsertSolutionAction } from "@/app/admin/problems/actions";
+import { Button } from "@/components/ui/button";
+
+const inputClass =
+  "mt-1 w-full rounded-md border border-border bg-background p-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent";
 
 export function SolutionForm({
   problemId,
@@ -33,38 +36,34 @@ export function SolutionForm({
       <input type="hidden" name="problemId" value={problemId} />
 
       <div>
-        <label className="text-sm text-zinc-400">Editorial</label>
+        <label className="text-sm text-muted">Editorial</label>
         <textarea
           name="editorial"
           defaultValue={defaults?.editorial}
           rows={4}
           required
-          className="mt-1 w-full rounded-md border border-zinc-800 bg-zinc-950 p-2 text-sm text-zinc-200"
+          className={inputClass}
         />
       </div>
 
       <div>
-        <label className="text-sm text-zinc-400">Code Snippet</label>
+        <label className="text-sm text-muted">Code Snippet</label>
         <textarea
           name="codeSnippet"
           defaultValue={defaults?.codeSnippet ?? ""}
           rows={6}
           spellCheck={false}
-          className="mt-1 w-full rounded-md border border-zinc-800 bg-zinc-950 p-2 font-mono text-sm text-zinc-200"
+          className={`${inputClass} font-mono`}
         />
       </div>
 
-      {error && <p className="text-sm text-rose-500">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
 
       <div className="flex items-center gap-3">
-        <button
-          type="submit"
-          disabled={isPending}
-          className="rounded-md border border-zinc-700 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-900 disabled:opacity-50"
-        >
+        <Button type="submit" variant="secondary" disabled={isPending}>
           {isPending ? "Saving..." : "Save Solution"}
-        </button>
-        {saved && <span className="text-sm text-emerald-500">Saved</span>}
+        </Button>
+        {saved && <span className="text-sm text-success">Saved</span>}
       </div>
     </form>
   );

@@ -6,8 +6,12 @@ import {
   updateHintAction,
   deleteHintAction,
 } from "@/app/admin/problems/actions";
+import { Button } from "@/components/ui/button";
 
 type Hint = { id: string; order: number; content: string };
+
+const inputClass =
+  "flex-1 rounded-md border border-border bg-background p-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent";
 
 export function HintsManager({
   problemId,
@@ -53,28 +57,21 @@ export function HintsManager({
         />
       ))}
 
-      {hints.length === 0 && (
-        <p className="text-sm text-zinc-600">No hints yet.</p>
-      )}
+      {hints.length === 0 && <p className="text-sm text-muted">No hints yet.</p>}
 
       <div className="flex gap-2 pt-2">
         <input
           value={newHintText}
           onChange={(e) => setNewHintText(e.target.value)}
           placeholder="Add a new hint..."
-          className="flex-1 rounded-md border border-zinc-800 bg-zinc-950 p-2 text-sm text-zinc-200"
+          className={inputClass}
         />
-        <button
-          type="button"
-          onClick={handleAdd}
-          disabled={isPending}
-          className="rounded-md border border-zinc-700 px-3 py-2 text-sm text-zinc-300 hover:bg-zinc-900 disabled:opacity-50"
-        >
+        <Button type="button" variant="secondary" onClick={handleAdd} disabled={isPending}>
           Add
-        </button>
+        </Button>
       </div>
 
-      {error && <p className="text-sm text-rose-500">{error}</p>}
+      {error && <p className="text-sm text-danger">{error}</p>}
     </div>
   );
 }
@@ -97,15 +94,12 @@ function HintRow({
 
   return (
     <div className="flex items-start gap-2">
-      <span className="mt-2 text-sm text-zinc-600">{hint.order}.</span>
-      <input
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        className="flex-1 rounded-md border border-zinc-800 bg-zinc-950 p-2 text-sm text-zinc-200"
-      />
+      <span className="mt-2 font-mono text-sm text-muted">{hint.order}.</span>
+      <input value={text} onChange={(e) => setText(e.target.value)} className={inputClass} />
       {dirty && (
-        <button
+        <Button
           type="button"
+          variant="secondary"
           disabled={disabled}
           onClick={() => {
             const fd = new FormData();
@@ -114,13 +108,13 @@ function HintRow({
             fd.set("content", text);
             onUpdate(fd);
           }}
-          className="rounded-md border border-zinc-700 px-2 py-2 text-xs text-zinc-300 hover:bg-zinc-900 disabled:opacity-50"
         >
           Save
-        </button>
+        </Button>
       )}
-      <button
+      <Button
         type="button"
+        variant="danger"
         disabled={disabled}
         onClick={() => {
           const fd = new FormData();
@@ -128,10 +122,9 @@ function HintRow({
           fd.set("problemId", problemId);
           onDelete(fd);
         }}
-        className="rounded-md border border-zinc-800 px-2 py-2 text-xs text-rose-500 hover:bg-rose-950/30 disabled:opacity-50"
       >
         Delete
-      </button>
+      </Button>
     </div>
   );
 }

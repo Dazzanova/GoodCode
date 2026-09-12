@@ -2,12 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getRevisionQueue } from "@/lib/services/revision";
-
-const difficultyColor: Record<string, string> = {
-  EASY: "text-emerald-500",
-  MEDIUM: "text-amber-500",
-  HARD: "text-rose-500",
-};
+import { DifficultyBadge } from "@/components/ui/badge";
 
 function formatRelative(date: Date, future: boolean) {
   const days = Math.round(Math.abs(Date.now() - date.getTime()) / (1000 * 60 * 60 * 24));
@@ -23,33 +18,31 @@ export default async function RevisionPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-zinc-100">Revision</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="text-2xl font-semibold text-foreground">Revision</h1>
+      <p className="mt-1 text-sm text-muted">
         Solving once isn&apos;t learning. Make sure it sticks.
       </p>
 
       <section className="mt-10">
-        <h2 className="text-sm font-medium text-zinc-400">
-          Due Today {due.length > 0 && <span className="text-zinc-600">({due.length})</span>}
+        <h2 className="text-sm font-medium text-muted">
+          Due Today {due.length > 0 && <span className="font-mono text-muted">({due.length})</span>}
         </h2>
 
         {due.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-600">Nothing due — you&apos;re caught up.</p>
+          <p className="mt-3 text-sm text-muted">Nothing due — you&apos;re caught up.</p>
         ) : (
           <div className="mt-3 space-y-2">
             {due.map((p) => (
               <Link
                 key={p.problem.id}
                 href={`/problems/${p.problem.slug}`}
-                className="block rounded-lg border border-zinc-800 p-4 hover:border-zinc-700 hover:bg-zinc-900/50"
+                className="block rounded-lg border border-border p-4 hover:border-accent/40 hover:bg-surface"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-zinc-200">{p.problem.title}</span>
-                  <span className={`text-xs font-medium ${difficultyColor[p.problem.difficulty]}`}>
-                    {p.problem.difficulty}
-                  </span>
+                  <span className="font-medium text-foreground">{p.problem.title}</span>
+                  <DifficultyBadge difficulty={p.problem.difficulty} />
                 </div>
-                <p className="mt-1 text-sm text-zinc-500">
+                <p className="mt-1 text-sm text-muted">
                   Solved {p.solvedAt ? formatRelative(p.solvedAt, false) : "previously"} ·{" "}
                   {p.attempts} attempt{p.attempts === 1 ? "" : "s"}
                 </p>
@@ -60,27 +53,25 @@ export default async function RevisionPage() {
       </section>
 
       <section className="mt-10">
-        <h2 className="text-sm font-medium text-zinc-400">
-          Upcoming {upcoming.length > 0 && <span className="text-zinc-600">({upcoming.length})</span>}
+        <h2 className="text-sm font-medium text-muted">
+          Upcoming {upcoming.length > 0 && <span className="font-mono text-muted">({upcoming.length})</span>}
         </h2>
 
         {upcoming.length === 0 ? (
-          <p className="mt-3 text-sm text-zinc-600">No upcoming reviews scheduled.</p>
+          <p className="mt-3 text-sm text-muted">No upcoming reviews scheduled.</p>
         ) : (
           <div className="mt-3 space-y-2">
             {upcoming.map((p) => (
               <Link
                 key={p.problem.id}
                 href={`/problems/${p.problem.slug}`}
-                className="block rounded-lg border border-zinc-800 p-4 hover:border-zinc-700 hover:bg-zinc-900/50"
+                className="block rounded-lg border border-border p-4 hover:border-accent/40 hover:bg-surface"
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-zinc-200">{p.problem.title}</span>
-                  <span className={`text-xs font-medium ${difficultyColor[p.problem.difficulty]}`}>
-                    {p.problem.difficulty}
-                  </span>
+                  <span className="font-medium text-foreground">{p.problem.title}</span>
+                  <DifficultyBadge difficulty={p.problem.difficulty} />
                 </div>
-                <p className="mt-1 text-sm text-zinc-500">
+                <p className="mt-1 text-sm text-muted">
                   Review {p.nextReviewAt ? formatRelative(p.nextReviewAt, true) : ""}
                 </p>
               </Link>
@@ -90,11 +81,11 @@ export default async function RevisionPage() {
       </section>
 
       {unsolvedCount > 0 && (
-        <section className="mt-10 border-t border-zinc-800 pt-6">
-          <p className="text-sm text-zinc-500">
+        <section className="mt-10 border-t border-border pt-6">
+          <p className="text-sm text-muted">
             {unsolvedCount} problem{unsolvedCount === 1 ? "" : "s"} you haven&apos;t attempted yet.{" "}
-            <Link href="/problems" className="text-zinc-300 hover:text-zinc-100">
-              Browse problems →
+            <Link href="/problems" className="text-accent hover:underline">
+              Browse problems
             </Link>
           </p>
         </section>

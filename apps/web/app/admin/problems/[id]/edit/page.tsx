@@ -29,21 +29,21 @@ export default async function EditProblemPage({
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-zinc-100">Edit Problem</h1>
+      <h1 className="text-2xl font-semibold text-foreground">Edit Problem</h1>
       <ProblemForm action={boundAction} topics={topics} defaults={problem} />
 
-      <div className="mt-10 border-t border-zinc-800 pt-6">
-        <h2 className="text-lg font-medium text-zinc-100">Solution</h2>
+      <div className="mt-10 border-t border-border pt-6">
+        <h2 className="text-lg font-medium text-foreground">Solution</h2>
         <SolutionForm problemId={problem.id} defaults={solution} />
       </div>
 
-      <div className="mt-10 border-t border-zinc-800 pt-6">
-        <h2 className="text-lg font-medium text-zinc-100">Hints</h2>
+      <div className="mt-10 border-t border-border pt-6">
+        <h2 className="text-lg font-medium text-foreground">Hints</h2>
         <HintsManager problemId={problem.id} hints={hints} />
       </div>
 
-      <div className="mt-10 border-t border-zinc-800 pt-6">
-        <h2 className="text-lg font-medium text-zinc-100">MCQs</h2>
+      <div className="mt-10 border-t border-border pt-6">
+        <h2 className="text-lg font-medium text-foreground">MCQs</h2>
         <MCQsManager problemId={problem.id} mcqs={mcqs} />
       </div>
     </div>

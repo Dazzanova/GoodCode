@@ -2,12 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getWeakAreas } from "@/lib/services/weak-areas";
-
-const difficultyColor: Record<string, string> = {
-  EASY: "text-emerald-500",
-  MEDIUM: "text-amber-500",
-  HARD: "text-rose-500",
-};
+import { DifficultyBadge } from "@/components/ui/badge";
 
 export default async function WeakAreasPage() {
   const session = await auth();
@@ -17,34 +12,34 @@ export default async function WeakAreasPage() {
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      <h1 className="text-2xl font-semibold text-zinc-100">Weak Areas</h1>
-      <p className="mt-1 text-sm text-zinc-500">
+      <h1 className="text-2xl font-semibold text-foreground">Weak Areas</h1>
+      <p className="mt-1 text-sm text-muted">
         Patterns worth another pass before you call them done.
       </p>
 
       {weakAreas.length === 0 ? (
-        <p className="mt-8 text-sm text-zinc-600">
-          No weak areas yet — either you're solid across everything you've tried, or you haven't started enough patterns to tell.
+        <p className="mt-8 text-sm text-muted">
+          No weak areas yet — either you&apos;re solid across everything you&apos;ve tried, or you haven&apos;t started enough patterns to tell.
         </p>
       ) : (
         <div className="mt-8 space-y-6">
           {weakAreas.map((area) => (
-            <div key={area.pattern.slug} className="rounded-lg border border-zinc-800 p-5">
+            <div key={area.pattern.slug} className="rounded-lg border border-border p-5">
               <div className="flex items-center justify-between">
                 <Link
                   href={`/patterns/${area.pattern.slug}`}
-                  className="font-medium text-zinc-200 hover:text-zinc-50"
+                  className="font-medium text-foreground hover:text-accent"
                 >
                   {area.pattern.name}
                 </Link>
-                <span className="text-sm text-zinc-500">
-                  {area.solvedCount}/{area.totalCount} solved · {area.mastery}% mastery
+                <span className="font-mono text-sm text-muted">
+                  {area.solvedCount}/{area.totalCount} · {area.mastery}%
                 </span>
               </div>
 
-              <div className="mt-2 h-1.5 w-full rounded-full bg-zinc-800">
+              <div className="mt-2 h-1.5 w-full rounded-full bg-surface">
                 <div
-                  className="h-1.5 rounded-full bg-amber-500"
+                  className="h-1.5 rounded-full bg-warning"
                   style={{ width: `${area.mastery}%` }}
                 />
               </div>
@@ -55,12 +50,10 @@ export default async function WeakAreasPage() {
                     <Link
                       key={p.id}
                       href={`/problems/${p.slug}`}
-                      className="flex items-center justify-between rounded-md border border-zinc-800 px-3 py-2 text-sm hover:border-zinc-700 hover:bg-zinc-900/50"
+                      className="flex items-center justify-between rounded-md border border-border px-3 py-2 text-sm hover:border-accent/40 hover:bg-surface"
                     >
-                      <span className="text-zinc-300">{p.title}</span>
-                      <span className={`text-xs font-medium ${difficultyColor[p.difficulty]}`}>
-                        {p.difficulty}
-                      </span>
+                      <span className="text-foreground">{p.title}</span>
+                      <DifficultyBadge difficulty={p.difficulty} />
                     </Link>
                   ))}
                 </div>

@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { saveNote } from "@/app/problems/[slug]/actions";
+import { Button } from "@/components/ui/button";
 
 export function NotePanel({
   problemId,
@@ -33,8 +34,8 @@ export function NotePanel({
   };
 
   return (
-    <div className="mt-6 border-t border-zinc-800 pt-6">
-      <h2 className="text-sm font-medium text-zinc-400">My Notes</h2>
+    <div className="mt-6 border-t border-border pt-6">
+      <h2 className="text-sm font-medium text-muted">My Notes</h2>
 
       <form action={handleSubmit} className="mt-3 space-y-3">
         <input type="hidden" name="problemId" value={problemId} />
@@ -49,21 +50,17 @@ export function NotePanel({
           }}
           rows={4}
           placeholder="What was your approach? What did you get wrong? How would you recognize this pattern next time?"
-          className="w-full rounded-md border border-zinc-800 bg-zinc-950 p-3 text-sm text-zinc-200 placeholder:text-zinc-600 focus:outline-none focus:ring-1 focus:ring-zinc-600"
+          className="w-full rounded-md border border-border bg-background p-3 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-accent"
         />
 
-        {error && <p className="text-sm text-rose-500">{error}</p>}
+        {error && <p className="text-sm text-danger">{error}</p>}
 
         <div className="flex items-center gap-3">
-          <button
-            type="submit"
-            disabled={isPending}
-            className="rounded-md border border-zinc-700 px-3 py-1.5 text-sm text-zinc-300 hover:bg-zinc-900 disabled:opacity-50"
-          >
+          <Button type="submit" variant="secondary" disabled={isPending}>
             {isPending ? "Saving..." : "Save note"}
-          </button>
-          {status === "saved" && <span className="text-sm text-emerald-500">Saved</span>}
-          {status === "cleared" && <span className="text-sm text-zinc-500">Note cleared</span>}
+          </Button>
+          {status === "saved" && <span className="text-sm text-success">Saved</span>}
+          {status === "cleared" && <span className="text-sm text-muted">Note cleared</span>}
         </div>
       </form>
     </div>
