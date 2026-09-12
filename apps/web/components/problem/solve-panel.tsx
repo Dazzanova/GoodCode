@@ -1,10 +1,16 @@
 "use client";
 
 import { useEffect, useState, useTransition } from "react";
+import dynamic from "next/dynamic";
 import { submitSolution } from "@/app/problems/[slug]/actions";
 import { Button } from "@/components/ui/button";
 
-const STARTER_CPP = `class Solution {\npublic:\n    // write your solution here\n};`;
+const MonacoEditor = dynamic(() => import("@monaco-editor/react"), { ssr: false });
+
+const STARTER_CPP = `class Solution {
+public:
+    // write your solution here
+};`;
 
 function formatTime(totalSeconds: number) {
   const m = Math.floor(totalSeconds / 60).toString().padStart(2, "0");
@@ -62,15 +68,24 @@ export function SolvePanel({
         <input type="hidden" name="slug" value={slug} />
         <input type="hidden" name="language" value="cpp" />
         <input type="hidden" name="timeSpentS" value={seconds} />
+        <input type="hidden" name="code" value={code} />
 
-        <textarea
-          name="code"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          rows={14}
-          spellCheck={false}
-          className="w-full rounded-md border border-border bg-background p-4 font-mono text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-        />
+        <div className="overflow-hidden rounded-md border border-border">
+          <MonacoEditor
+            height="360px"
+            language="cpp"
+            theme="vs-dark"
+            value={code}
+            onChange={(value) => setCode(value ?? "")}
+            options={{
+              fontSize: 14,
+              fontFamily: "var(--font-geist-mono)",
+              minimap: { enabled: false },
+              scrollBeyondLastLine: false,
+              padding: { top: 16 },
+            }}
+          />
+        </div>
 
         {error && <p className="text-sm text-danger">{error}</p>}
 
