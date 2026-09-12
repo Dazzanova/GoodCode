@@ -1,5 +1,5 @@
 import { PrismaClient, Difficulty } from "@prisma/client";
-import { computeReviewIntervalDays } from "../lib/scheduling";
+import { computeReviewIntervalDays } from "../lib/scoring";
 import bcrypt from "bcryptjs";
 
 const prisma = new PrismaClient();

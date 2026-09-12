@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
-
-const MASTERY_THRESHOLD = 70;
+import { MASTERY_THRESHOLD } from "@/lib/scoring";
 
 export type WeakArea = {
   pattern: { name: string; slug: string };

@@ -6,3 +6,5 @@ export function computeReviewIntervalDays(attempts: number): number {
   if (attempts <= 3) return 5;
   return 2;
 }
+
+export const MASTERY_THRESHOLD = 70;

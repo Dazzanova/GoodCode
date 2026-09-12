@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db/prisma";
 import type { CreateSubmissionInput } from "@/lib/validations/submission";
-import { computeReviewIntervalDays } from "@/lib/scheduling";
+import { MASTERY_THRESHOLD } from "@/lib/scoring";
 
 export async function createSubmission(userId: string, input: CreateSubmissionInput) {
   const { problemId, code, language, timeSpentS } = input;

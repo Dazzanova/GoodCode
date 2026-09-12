@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db/prisma";
+import { MASTERY_THRESHOLD } from "@/lib/scoring";
 
 export type PracticePick = {
 	problem: { id: string; title: string; slug: string; difficulty: string };
@@ -91,7 +92,7 @@ export async function getDailyPractice(
 					problems.length === 0 ? 0 : (solvedCount / problems.length) * 100;
 				return { name: p.name, problems, mastery, attempted };
 			})
-			.filter((p) => p.attempted && p.mastery < 70 && p.problems.length > 0)
+			.filter((p) => p.attempted && p.mastery < MASTERY_THRESHOLD && p.problems.length > 0)
 			.sort((a, b) => a.mastery - b.mastery);
 
 		for (const pattern of patternStats) {
