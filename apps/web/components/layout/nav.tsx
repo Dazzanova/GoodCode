@@ -32,9 +32,14 @@ export async function Nav() {
             </>
           )}
           {session?.user?.role === "ADMIN" && (
-            <Link href="/admin/problems" className="text-sm text-muted hover:text-foreground">
-              Admin
-            </Link>
+            <>
+              <Link href="/admin/problems" className="text-sm text-muted hover:text-foreground">
+                Admin
+              </Link>
+              <Link href="/admin/taxonomy" className="text-sm text-muted hover:text-foreground">
+                Taxonomy
+              </Link>
+            </>
           )}
         </div>
 
